@@ -19,10 +19,20 @@
     <input type="text" th:field="*{email}" id="email"/>
     <div style="color:red" th:if="${#fields.hasErrors('email')}" th:errors="*{email}" >email error</div>
     <br/>
-    <label for="password">Enter email: </label>
+    <label for="password">Enter password: </label>
     <input type="password" th:field="*{password}" id="password"/>
     <div style="color:red" th:if="${#fields.hasErrors('password')}" th:errors="*{email}" >email error</div>
     <br/>
+
+    <h2>Select Roles:</h2>
+    <div th:each="role : ${allRoles}">
+        <input type="checkbox" th:id="${'role-' + role.id}"
+               th:name="selectedRoles" th:value="${role.id}" />
+        <label th:for="${'role-' + role.id}" th:text="${role.name}"></label> <br>
+    </div>
+    <div style="color:red" th:if="${#fields.hasErrors('roles')}" th:errors="*{roles}" >Role error</div>
+    <br/>
+
 
     <input type="submit" value="Create!"/>
 </form>

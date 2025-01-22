@@ -5,21 +5,31 @@ import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import ru.kata.spring.boot_security.demo.models.Role;
 import ru.kata.spring.boot_security.demo.models.User;
+import ru.kata.spring.boot_security.demo.repositories.RoleRepository;
 import ru.kata.spring.boot_security.demo.service.UserServiceImpl;
+
+import java.util.List;
+import java.util.Set;
 
 @Controller
 public class UsersController {
 
     private final UserServiceImpl userService;
+    private final PasswordEncoder passwordEncoder;
+    private final RoleRepository roleRepository;
 
     @Autowired
-    public UsersController(UserServiceImpl userDaoImpl) {
+    public UsersController(UserServiceImpl userDaoImpl, PasswordEncoder passwordEncoder, RoleRepository roleRepository) {
         this.userService = userDaoImpl;
+        this.passwordEncoder = passwordEncoder;
+        this.roleRepository = roleRepository;
     }
 
     @GetMapping("/")
@@ -34,7 +44,7 @@ public class UsersController {
     }
 
     @GetMapping("/user")
-    public String show(Model model) {
+    public String user(Model model) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String username = authentication.getName();
 
@@ -44,25 +54,31 @@ public class UsersController {
         return "people/user";
     }
 
-    @GetMapping("/show")
-    public String showUser(@RequestParam("id") int id, Model model) {
-        User user = userService.getUserById(id);
-        model.addAttribute("user", user);
-        return "people/user";
-    }
+//    @GetMapping("/show")
+//    public String showUser(@RequestParam("id") int id, Model model) {
+//        User user = userService.getUserById(id);
+//        model.addAttribute("user", user);
+//        return "people/user";
+//    }
 
     @GetMapping("/admin/new")
-    public String newPerson(@ModelAttribute("user") User user) {
+    public String newPerson(Model model) {
+        model.addAttribute("user", new User());
+        List<Role> allRoles = roleRepository.findAll();
+        model.addAttribute("allRoles", allRoles);
         return "people/admin/new";
     }
 
     @PostMapping()
-    public String create(@ModelAttribute("user") @Valid User user, BindingResult bindingResult) {
+    public String create(@ModelAttribute("user") @Valid User user, BindingResult bindingResult,
+                         @RequestParam("allRoles") List<Role> allRoles) {
         if (bindingResult.hasErrors()) {
             return "people/admin/new";
         }
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
+        user.setRoles(allRoles);  //TODO
         userService.save(user);
-        return "redirect:/";
+        return "people/admin/index";
     }
 
     @GetMapping("/edit")
