@@ -36,13 +36,19 @@ public class UsersController {
     @GetMapping("/user")
     public String show(Model model) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String username = authentication.getName(); // Получаем имя пользователя
+        String username = authentication.getName();
 
-        // Получаем пользователя по имени (или по другому уникальному идентификатору)
-        User user = userService.getUserByName(username); // Предполагается, что у вас есть метод для получения пользователя по имени
+        User user = userService.getUserByName(username);
 
         model.addAttribute("user", user);
-        return "people/user"; // Возвращаем представление
+        return "people/user";
+    }
+
+    @GetMapping("/show")
+    public String showUser(@RequestParam("id") int id, Model model) {
+        User user = userService.getUserById(id);
+        model.addAttribute("user", user);
+        return "people/user";
     }
 
     @GetMapping("/admin/new")
@@ -80,6 +86,6 @@ public class UsersController {
     @DeleteMapping("/delete")
     public String delete(@RequestParam("id") int id) {
         userService.delete(userService.getUserById(id));
-        return "redirect:/";
+        return "redirect:/admin/show_all";
     }
 }
