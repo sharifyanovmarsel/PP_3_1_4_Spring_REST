@@ -23,6 +23,10 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         this.usersRepository = usersRepository;
     }
 
+    public User getUserByName(String username) {
+        return usersRepository.findByName(username);
+    }
+
     @Override
     public List<User> getAllUsers() {
         return usersRepository.findAll();

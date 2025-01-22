@@ -34,7 +34,7 @@ public class User implements UserDetails {
     private String email;
 
     @Column(name = "password")
-    @NotEmpty
+    //@NotEmpty
     private String password;
 
     @ManyToMany(fetch = FetchType.EAGER)
