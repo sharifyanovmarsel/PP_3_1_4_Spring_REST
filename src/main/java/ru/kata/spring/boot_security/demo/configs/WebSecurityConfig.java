@@ -30,16 +30,15 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http
-                .authorizeRequests()
+        http.authorizeRequests()
                 .antMatchers("/", "/index").permitAll()
                 .antMatchers("/user").hasAnyRole("USER", "ADMIN")
                 .antMatchers("/admin/**").hasRole("ADMIN")
                 .anyRequest().authenticated()
                 .and()
                 .formLogin()
-                .defaultSuccessUrl("/user", true) // Указываем, куда перенаправлять после успешного входа
-                .failureUrl("/login?error=true") // Указываем, куда перенаправлять при ошибке входа
+                .defaultSuccessUrl("/user", true)
+                .failureUrl("/login?error=true")
                 .permitAll()
                 .and()
                 .logout()

@@ -1,6 +1,7 @@
 package ru.kata.spring.boot_security.demo.controllers;
 
 
+import javax.transaction.Transactional;
 import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
@@ -15,6 +16,7 @@ import ru.kata.spring.boot_security.demo.models.User;
 import ru.kata.spring.boot_security.demo.repositories.RoleRepository;
 import ru.kata.spring.boot_security.demo.service.UserServiceImpl;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -54,12 +56,12 @@ public class UsersController {
         return "people/user";
     }
 
-//    @GetMapping("/show")
-//    public String showUser(@RequestParam("id") int id, Model model) {
-//        User user = userService.getUserById(id);
-//        model.addAttribute("user", user);
-//        return "people/user";
-//    }
+    @GetMapping("/show")
+    public String showUser(@RequestParam("id") int id, Model model) {
+        User user = userService.getUserById(id);
+        model.addAttribute("user", user);
+        return "people/user";
+    }
 
     @GetMapping("/admin/new")
     public String newPerson(Model model) {
@@ -69,16 +71,26 @@ public class UsersController {
         return "people/admin/new";
     }
 
-    @PostMapping()
+    @Transactional
+    @PostMapping("/")
     public String create(@ModelAttribute("user") @Valid User user, BindingResult bindingResult,
-                         @RequestParam("allRoles") List<Role> allRoles) {
+                         @RequestParam("selectedRoles") List<Integer> selectedRoleIds) {
         if (bindingResult.hasErrors()) {
             return "people/admin/new";
         }
         user.setPassword(passwordEncoder.encode(user.getPassword()));
-        user.setRoles(allRoles);  //TODO
+        Set<Role> allRoles = new HashSet<>();
+        if (selectedRoleIds != null) {
+            for (Integer roleId : selectedRoleIds) {
+                Role role = roleRepository.getById(roleId);
+                allRoles.add(role);
+            }
+        }
+        System.out.println(allRoles);
+        user.setRoles(allRoles);
+        System.out.println(user);
         userService.save(user);
-        return "people/admin/index";
+        return "redirect:/admin/show_all";
     }
 
     @GetMapping("/edit")
@@ -94,6 +106,7 @@ public class UsersController {
         if (bindingResult.hasErrors()) {
             return "people/admin/edit";
         }
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
         userService.update(id, user);
         System.out.println(user);
         return "redirect:/";

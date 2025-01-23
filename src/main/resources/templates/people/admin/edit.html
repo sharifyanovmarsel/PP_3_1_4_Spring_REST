@@ -20,10 +20,12 @@
     <div style="color:red" th:if="${#fields.hasErrors('email')}" th:errors="*{email}" >email error</div>
     <br/>
 
-    <label for="password">Enter email: </label>
+    <label for="password">Enter password: </label>
     <input type="password" th:field="*{password}" id="password"/>
     <div style="color:red" th:if="${#fields.hasErrors('password')}" th:errors="*{password}" >password error</div>
     <br/>
+
+
     <input type="submit" value="Update!"/>
 </form>
 <br>

@@ -8,6 +8,7 @@
 <p th:text="${user.getName() + ', ' + user.getAge()}">VALUE</p>
 <p th:text="${'Email: ' + user.getEmail()}">VALUE</p>
 <p th:text="${user.getId()}">VALUE</p>
+<p th:text="${user.getRoles()}">VALUE</p>
 
 <div sec:authorize="hasRole('ROLE_ADMIN')">
     <a th:href="@{/edit(id=${user.getId()})}">Edit</a>

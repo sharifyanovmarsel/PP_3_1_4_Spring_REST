@@ -51,7 +51,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     public void save(User user) {
         User userFromBD = usersRepository.findByName(user.getName());
         if (userFromBD == null) {
-          user.setRoles(Collections.singleton(new Role(1, "ROLE_USER")));
+//          user.setRoles(Collections.singleton(new Role(1, "ROLE_USER")));
           //надо зашифровать пароль TODO bEncoder...
           user.setPassword(user.getPassword());
             usersRepository.save(user);
