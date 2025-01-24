@@ -2,6 +2,7 @@ package ru.kata.spring.boot_security.demo.controllers;
 
 
 import javax.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -53,9 +54,7 @@ public class UsersController {
     public String user(Model model) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String username = authentication.getName();
-
         User user = userService.getUserByName(username);
-
         model.addAttribute("user", user);
         return "people/user";
     }
@@ -89,9 +88,7 @@ public class UsersController {
                 allRoles.add(role);
             }
         }
-        System.out.println(allRoles);
         user.setRoles(allRoles);
-        System.out.println(user);
         userService.save(user);
         return "redirect:/admin/show_all";
     }
@@ -122,8 +119,6 @@ public class UsersController {
         }
         user.setRoles(allRoles);
         userService.update(id, user);
-        System.out.println(user);
-        System.out.println(user);
         return "redirect:/admin/show_all";
     }
 

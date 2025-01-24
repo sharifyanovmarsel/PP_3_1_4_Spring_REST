@@ -12,13 +12,4 @@ import java.util.Optional;
 public interface UsersRepository extends JpaRepository<User, Integer> {
     @Query("Select u from User u left join fetch u.roles where u.name=:name")
     User findByName(String name);
-    @Modifying
-    @Query("UPDATE User u SET u.name = :#{#user.name}, " +
-            "u.password = :#{#user.password}, " +
-            "u.email = :#{#user.email}, " +
-            "u.age = :#{#user.age}, " +
-            "u.roles = :#{#user.roles} " +
-            "WHERE u.id = :id")
-    void updateUserById(@Param("id") Integer id, @Param("user") User user);
-
 }

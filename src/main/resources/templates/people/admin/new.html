@@ -36,6 +36,7 @@
 
     <input type="submit" value="Create!"/>
 </form>
-
+<br>
+<a th:if="${#authentication != null and #authentication.authenticated}" th:href="@{/}">Logout</a>
 </body>
 </html>

@@ -42,7 +42,8 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     @Transactional
     @Override
     public void update(int id, User updatedUser) {
-            usersRepository.updateUserById(id,updatedUser);
+        if (usersRepository.findById(id).isPresent()) {
+            usersRepository.save(updatedUser);}
     }
 
     @Transactional
