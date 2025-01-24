@@ -1,7 +1,6 @@
 package ru.kata.spring.boot_security.demo.controllers;
 
 
-import javax.transaction.Transactional;
 import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
@@ -39,10 +38,15 @@ public class UsersController {
         return "index";
     }
 
+    @GetMapping("/admin")
+    public String admin() {
+        return "people/admin/admin";
+    }
+
     @GetMapping("/admin/show_all")
     public String index(Model model) {
         model.addAttribute("people", userService.getAllUsers());
-        return "people/admin/index";
+        return "people/admin/all_users";
     }
 
     @GetMapping("/user")
@@ -71,7 +75,6 @@ public class UsersController {
         return "people/admin/new";
     }
 
-    @Transactional
     @PostMapping("/")
     public String create(@ModelAttribute("user") @Valid User user, BindingResult bindingResult,
                          @RequestParam("selectedRoles") List<Integer> selectedRoleIds) {
@@ -93,26 +96,38 @@ public class UsersController {
         return "redirect:/admin/show_all";
     }
 
-    @GetMapping("/edit")
+    @GetMapping("/admin/edit")
     public String edit(Model model, @RequestParam("id") int id) {
+        List<Role> allRoles = roleRepository.findAll();
         model.addAttribute("user", userService.getUserById(id));
+        model.addAttribute("allRoles", allRoles);
         return "people/admin/edit";
     }
 
-    @PatchMapping("/update")
+    @PatchMapping("/admin/update")
     public String update(@ModelAttribute("user") @Valid User user,
                          BindingResult bindingResult,
-                         @RequestParam("id") int id) {
+                         @RequestParam("id") int id,
+                         @RequestParam("selectedRoles") List<Integer> selectedRoleIds) {
         if (bindingResult.hasErrors()) {
             return "people/admin/edit";
         }
         user.setPassword(passwordEncoder.encode(user.getPassword()));
+        Set<Role> allRoles = new HashSet<>();
+        if (selectedRoleIds != null) {
+            for (Integer roleId : selectedRoleIds) {
+                Role role = roleRepository.getById(roleId);
+                allRoles.add(role);
+            }
+        }
+        user.setRoles(allRoles);
         userService.update(id, user);
         System.out.println(user);
-        return "redirect:/";
+        System.out.println(user);
+        return "redirect:/admin/show_all";
     }
 
-    @DeleteMapping("/delete")
+    @DeleteMapping("/admin/delete")
     public String delete(@RequestParam("id") int id) {
         userService.delete(userService.getUserById(id));
         return "redirect:/admin/show_all";

@@ -11,15 +11,17 @@
 <p th:text="${user.getRoles()}">VALUE</p>
 
 <div sec:authorize="hasRole('ROLE_ADMIN')">
-    <a th:href="@{/edit(id=${user.getId()})}">Edit</a>
+    <a th:href="@{admin/edit(id=${user.getId()})}">Edit</a>
 </div>
 
-<div sec:authorize="hasRole('ROLE_ADMIN')">
-    <form th:method="DELETE" th:action="@{/delete(id=${user.getId()})}">
+<div sec:authorize="hasRole('ADMIN')">
+    <form th:method="DELETE" th:action="@{admin/delete(id=${user.getId()})}">
         <input type="submit" value="Delete"/>
     </form>
 </div>
 <br>
-<a href="/index">Home</a>
+<a href="/logout">Logout</a>
+
+
 </body>
 </html>

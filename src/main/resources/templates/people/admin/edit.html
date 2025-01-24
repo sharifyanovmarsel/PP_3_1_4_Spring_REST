@@ -6,7 +6,8 @@
 </head>
 <body>
 
-<form th:method="PATCH" th:action="@{/update(id=${user.getId()})}" th:object="${user}">
+<form th:method="PATCH" th:action="@{/admin/update}" th:object="${user}">
+    <input type="hidden" th:value="${user.id}" name="id"/>
     <label for="name">Enter name: </label>
     <input type="text" th:field="*{name}" id="name"/>
     <div style="color:red" th:if="${#fields.hasErrors('name')}" th:errors="*{name}" >Name error</div>
@@ -25,11 +26,18 @@
     <div style="color:red" th:if="${#fields.hasErrors('password')}" th:errors="*{password}" >password error</div>
     <br/>
 
+    <h4>Select Roles:</h4>
+    <div th:each="role : ${allRoles}">
+        <input type="checkbox" th:id="${'role-' + role.id}"
+               th:name="selectedRoles" th:value="${role.id}" />
+        <label th:for="${'role-' + role.id}" th:text="${role.name}"></label> <br>
+    </div>
+    <br/>
 
     <input type="submit" value="Update!"/>
 </form>
 <br>
-<a href="/">Home</a>
+<a href="/index">Home</a>
 
 </body>
 </html>
