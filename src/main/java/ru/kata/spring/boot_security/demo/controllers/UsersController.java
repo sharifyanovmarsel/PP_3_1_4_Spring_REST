@@ -40,9 +40,17 @@ public class UsersController {
     }
 
     @GetMapping("/admin")
-    public String admin() {
+    public String admin(Model model) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+        User user = userService.getUserByName(username);
+        List<Role> allRoles = roleRepository.findAll();
+        model.addAttribute("allRoles", allRoles);
+        model.addAttribute("people", userService.getAllUsers());
+        model.addAttribute("user", user);
         return "people/admin/admin";
     }
+
 
     @GetMapping("/admin/show_all")
     public String index(Model model) {
@@ -71,7 +79,7 @@ public class UsersController {
         model.addAttribute("user", new User());
         List<Role> allRoles = roleRepository.findAll();
         model.addAttribute("allRoles", allRoles);
-        return "people/admin/new";
+        return "people/admin/admin";
     }
 
     @PostMapping("/")
@@ -90,7 +98,7 @@ public class UsersController {
         }
         user.setRoles(allRoles);
         userService.save(user);
-        return "redirect:/admin/show_all";
+        return "redirect:/admin";
     }
 
     @GetMapping("/admin/edit")
@@ -125,6 +133,6 @@ public class UsersController {
     @DeleteMapping("/admin/delete")
     public String delete(@RequestParam("id") int id) {
         userService.delete(userService.getUserById(id));
-        return "redirect:/admin/show_all";
+        return "redirect:/admin";
     }
 }

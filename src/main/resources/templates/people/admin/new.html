@@ -1,11 +1,4 @@
-<!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
-<head>
-    <meta charset="UTF-8">
-    <title>New user</title>
-</head>
-<body>
-
+<div class="new-user" role="document">
 <form th:method="POST" th:action="@{/}" th:object="${user}">
     <label for="name">Enter name: </label>
     <input type="text" th:field="*{name}" id="name"/>
@@ -32,11 +25,6 @@
     </div>
     <div style="color:red" th:if="${#fields.hasErrors('roles')}" th:errors="*{roles}" >Role error</div>
     <br/>
-
-
     <input type="submit" value="Create!"/>
 </form>
-<br>
-<a th:if="${#authentication != null and #authentication.authenticated}" th:href="@{/}">Logout</a>
-</body>
-</html>
+</div>
