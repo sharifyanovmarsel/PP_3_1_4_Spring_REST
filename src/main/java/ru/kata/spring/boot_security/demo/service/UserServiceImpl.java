@@ -33,6 +33,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
     @Override
     public List<User> getAllUsers() {
+        System.out.println("Полученные пользователи: " + usersRepository.findAll());
         return usersRepository.findAll();
     }
 
@@ -40,8 +41,9 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     public User getUserById(int id) {
         if (usersRepository.findById(id).isPresent()) {
             return usersRepository.findById(id).get();
-        } else throw new UsernameNotFoundException("User not found");
-    }
+//        } else throw new UsernameNotFoundException("User not found");
+        }return null;
+        }
 
     @Transactional
     @Override
@@ -76,5 +78,10 @@ public class UserServiceImpl implements UserService, UserDetailsService {
             throw new UsernameNotFoundException("User not found!!!");
         }
         return user;
+    }
+
+    @org.springframework.transaction.annotation.Transactional
+    public void saveToDB(User user) {
+        usersRepository.save(user);
     }
 }

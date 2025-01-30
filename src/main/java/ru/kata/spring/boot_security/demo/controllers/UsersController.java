@@ -135,4 +135,9 @@ public class UsersController {
         userService.delete(userService.getUserById(id));
         return "redirect:/admin";
     }
+
+    @GetMapping("/index2")
+    public String index2() {
+        return "/people/index2";
+    }
 }
