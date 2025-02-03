@@ -16,6 +16,7 @@ import ru.kata.spring.boot_security.demo.models.User;
 import ru.kata.spring.boot_security.demo.repositories.RoleRepository;
 import ru.kata.spring.boot_security.demo.service.UserServiceImpl;
 
+import java.security.Principal;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -140,4 +141,27 @@ public class UsersController {
     public String index2() {
         return "/people/index2";
     }
+
+    @GetMapping("/user2")
+    public String userPage(Model model, Principal principal) {
+        if (principal == null) {
+            System.out.println("Principal is null");
+            return "redirect:/login"; // или другая страница
+        }
+
+        String email = principal.getName();
+        System.out.println("Current user email: " + email);
+
+        User currentUser = userService.getUserByName(email);
+        if (currentUser == null) {
+            System.out.println("User not found for email: " + email);
+            return "error"; // или перенаправление на другую страницу
+        }
+
+        model.addAttribute("currentUser", currentUser);
+        model.addAttribute("currentRoles", currentUser.getRolesAsText());
+        return "people/user2";
+    }
+
+
 }
