@@ -64,8 +64,8 @@ public class PeopleController {
     @PutMapping("/users")
     public void updateUser(@RequestBody User user) {
         userService.update(user.getId(), user);
-
     }
+
 
     @DeleteMapping("/users/{id}")
     public void deleteUser(@PathVariable int id) {

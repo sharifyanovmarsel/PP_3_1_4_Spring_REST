@@ -7,20 +7,26 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import ru.kata.spring.boot_security.demo.models.Role;
 import ru.kata.spring.boot_security.demo.models.User;
+import ru.kata.spring.boot_security.demo.repositories.RoleRepository;
 import ru.kata.spring.boot_security.demo.repositories.UsersRepository;
 
+import javax.persistence.EntityNotFoundException;
 import javax.transaction.Transactional;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Service
 public class UserServiceImpl implements UserService, UserDetailsService {
 
     private final UsersRepository usersRepository;
+    private final RoleRepository roleRepository;
 
     @Autowired
-    public UserServiceImpl(UsersRepository usersRepository) {
+    public UserServiceImpl(UsersRepository usersRepository, RoleRepository roleRepository) {
         this.usersRepository = usersRepository;
+        this.roleRepository = roleRepository;
     }
 
     public User getUserByName(String username) {
@@ -48,9 +54,33 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     @Transactional
     @Override
     public void update(int id, User updatedUser) {
+        System.out.println("Updated User: " + updatedUser);
         if (usersRepository.findById(id).isPresent()) {
-            usersRepository.save(updatedUser);}
+            User existingUser = usersRepository.findById(id).get();
+
+            // Обновляем основные поля
+            existingUser.setName(updatedUser.getName());
+            existingUser.setAge(updatedUser.getAge());
+            existingUser.setEmail(updatedUser.getEmail());
+            existingUser.setPassword(updatedUser.getPassword());
+
+            // Обновляем роли
+//            Set<Role> roles = new HashSet<>();
+//            for (String roleName : updatedUser.getRoles()) {
+//                Role role = roleRepository.findByName(roleName); // Находим роль по имени
+//                if (role != null) {
+//                    roles.add(role);
+//                }
+//            }
+            existingUser.setRoles(updatedUser.getRoles()); // Устанавливаем обновленные роли
+
+            usersRepository.save(existingUser);
+        } else {
+            throw new EntityNotFoundException("Пользователь не найден с ID: " + id);
+        }
     }
+
+
 
     @Transactional
     @Override

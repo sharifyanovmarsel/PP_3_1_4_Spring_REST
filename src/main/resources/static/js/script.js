@@ -26,7 +26,7 @@ async function fetchUsers() {
             editButton.setAttribute('data-age', anyuser.age);
             editButton.setAttribute('data-email', anyuser.email);
             editButton.setAttribute('data-password', anyuser.password);
-            editButton.setAttribute('data-roles', anyuser.roles);
+            editButton.setAttribute('data-roles', JSON.stringify(anyuser.roles)); // Преобразуем роли в JSON
             editButton.textContent = 'Edit';
             editCell.appendChild(editButton);
 
@@ -50,6 +50,8 @@ async function fetchUsers() {
     }
 }
 
+
+
 function attachEditButtonListeners() {
     const editButtons = document.querySelectorAll('.edit-btn');
 
@@ -59,19 +61,47 @@ function attachEditButtonListeners() {
             const userName = button.getAttribute('data-name');
             const userAge = button.getAttribute('data-age');
             const userEmail = button.getAttribute('data-email');
-            const userPassword = button.getAttribute('data-password');
+            const userRoles = JSON.parse(button.getAttribute('data-roles')); // Предположим, что у вас есть атрибут data-roles
 
-            document.getElementById('userIdLabel').value = userId;
+            // Заполняем поля модального окна
+            document.getElementById('userId').value = userId;
+            document.getElementById('userIdLabel').value = userId; // Для отображения ID
             document.getElementById('userName').value = userName;
             document.getElementById('userAge').value = userAge;
             document.getElementById('userEmail').value = userEmail;
-            document.getElementById('userPassword').value = userPassword;
 
+            // Очищаем контейнер ролей
+            const rolesContainer = document.getElementById('rolesContainer');
+            rolesContainer.innerHTML = '';
+
+            // Создаем чекбоксы для ролей
+            roles.forEach(role => {
+                const checkbox = document.createElement('div');
+                checkbox.classList.add('form-check');
+                checkbox.innerHTML = `
+                    <input class="form-check-input" type="checkbox" id="role${role.id}" value="${role.name}" ${userRoles.includes(role.name) ? 'checked' : ''}>
+                    <label class="form-check-label" for="role${role.id}">
+                        ${role.name}
+                    </label>
+                `;
+                rolesContainer.appendChild(checkbox);
+            });
+
+            // Открываем модальное окно
             const editUserModal = new bootstrap.Modal(document.getElementById('editUserModal'));
             editUserModal.show();
         });
     });
 }
+
+
+
+const roles = [
+    { id: 1, name: 'ROLE_ADMIN' },
+    { id: 2, name: 'ROLE_USER' },
+
+];
+
 
 // Переменная для хранения ID пользователя, которого нужно удалить
 let userIdToDelete = null;
@@ -116,3 +146,118 @@ document.addEventListener('DOMContentLoaded', () => {
 // Загружаем пользователей при загрузке
 window.onload = fetchUsers;
 
+
+document.addEventListener('DOMContentLoaded', function () {
+    // Обработчик для кнопки "Edit"
+    const editButtons = document.querySelectorAll('.edit-btn');
+    editButtons.forEach(button => {
+        button.addEventListener('click', function () {
+            const userId = this.getAttribute('data-id');
+            const userName = this.getAttribute('data-name');
+            const userAge = this.getAttribute('data-age');
+            const userEmail = this.getAttribute('data-email');
+
+            // Заполняем поля модального окна
+            document.getElementById('userId').value = userId;
+            document.getElementById('userIdLabel').value = userId; // Для отображения ID
+            document.getElementById('userName').value = userName;
+            document.getElementById('userAge').value = userAge;
+            document.getElementById('userEmail').value = userEmail;
+
+            // Открываем модальное окно
+            const editUserModal = new bootstrap.Modal(document.getElementById('editUserModal'));
+            editUserModal.show();
+        });
+    });
+
+    editButtons.forEach(button => {
+        button.addEventListener('click', function () {
+            const userId = this.getAttribute('data-id');
+            const userName = this.getAttribute('data-name');
+            const userAge = this.getAttribute('data-age');
+            const userEmail = this.getAttribute('data-email');
+            const userRoles = this.getAttribute('data-roles'); // Предположим, что у вас есть атрибут data-roles
+
+            // Заполняем поля модального окна
+            document.getElementById('userId').value = userId;
+            document.getElementById('userIdLabel').value = userId; // Для отображения ID
+            document.getElementById('userName').value = userName;
+            document.getElementById('userAge').value = userAge;
+            document.getElementById('userEmail').value = userEmail;
+
+            // Очищаем контейнер ролей
+            const rolesContainer = document.getElementById('rolesContainer');
+            rolesContainer.innerHTML = '';
+
+            // Создаем чекбоксы для ролей
+            roles.forEach(role => {
+                const checkbox = document.createElement('div');
+                checkbox.classList.add('form-check');
+                checkbox.innerHTML = `
+                <input class="form-check-input" type="checkbox" id="role${role.id}" value="${role.name}" ${userRoles.includes(role.name) ? 'checked' : ''}>
+                <label class="form-check-label" for="role${role.id}">
+                    ${role.name}
+                </label>
+            `;
+                rolesContainer.appendChild(checkbox);
+            });
+
+            // Открываем модальное окно
+            const editUserModal = new bootstrap.Modal(document.getElementById('editUserModal'));
+            editUserModal.show();
+        });
+    });
+
+
+    // Обработчик для кнопки "Save changes"
+    document.getElementById('saveChangesBtn').addEventListener('click', function () {
+        const userId = parseInt(document.getElementById('userId').value, 10); // Преобразуем в целое число
+        const userName = document.getElementById('userName').value;
+        const userAge = document.getElementById('userAge').value;
+        const userEmail = document.getElementById('userEmail').value;
+        const userPassword = document.getElementById('userPassword').value; // Если нужно передавать пароль
+
+        // Собираем выбранные роли
+        const selectedRoles = [];
+        const roleCheckboxes = document.querySelectorAll('#rolesContainer input[type="checkbox"]');
+        roleCheckboxes.forEach(checkbox => {
+            if (checkbox.checked) {
+                const roleId = parseInt(checkbox.id.replace('role', '')); // Извлекаем ID из ID чекбокса
+                selectedRoles.push({ id: roleId }); // Добавляем объект с ID роли
+            }
+        });
+
+        const user = {
+            id: userId,
+            name: userName,
+            age: userAge,
+            email: userEmail,
+            password: userPassword,
+            roles: selectedRoles // Передаем массив объектов Role
+        };
+
+        console.log('User object to update:', user); // Логируем объект пользователя
+
+        // Отправляем PUT запрос на сервер
+        fetch(`/api/users`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(user)
+        })
+            .then(response => {
+                if (response.ok) {
+                    const editUserModal = bootstrap.Modal.getInstance(document.getElementById('editUserModal'));
+                    editUserModal.hide();
+                    location.reload(); // Перезагрузка страницы для обновления данных
+                } else {
+                    alert('Ошибка при обновлении пользователя');
+                }
+            })
+            .catch(error => {
+                console.error('Ошибка:', error);
+            });
+    });
+
+});

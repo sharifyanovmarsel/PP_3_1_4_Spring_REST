@@ -79,9 +79,10 @@
                                 <td th:text="${user.roles()}"></td>
                                 <td>
                                     <button class="btn btn-primary edit-btn"
-                                            th:attr="data-id=${user.id}, data-name=${user.name}, data-age=${user.age}, data-email=${user.email}">
+                                            th:attr="data-id=${user.id}, data-name=${user.name}, data-age=${user.age}, data-email=${user.email}, data-roles=${user.roles()}">
                                         Edit
                                     </button>
+
                                 </td>
                                 <td>
                                     <button class="btn btn-danger delete-btn"
@@ -145,7 +146,6 @@
                         <label class="form-label">Roles</label>
                         <div id="rolesContainer"></div>
                     </div>
-
                 </form>
             </div>
             <div class="modal-footer">
