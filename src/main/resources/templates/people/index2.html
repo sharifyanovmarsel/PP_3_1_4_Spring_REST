@@ -66,7 +66,8 @@
                                 <th scope="col">Возраст</th>
                                 <th scope="col">Электронная почта</th>
                                 <th scope="col">Роли</th>
-                                <th scope="col">Редактировать</th> <!-- Новый заголовок для столбца -->
+                                <th scope="col">Редактировать</th>
+                                <th scope="col">Удалить</th>
                             </tr>
                             </thead>
                             <tbody>
@@ -80,6 +81,12 @@
                                     <button class="btn btn-primary edit-btn"
                                             th:attr="data-id=${user.id}, data-name=${user.name}, data-age=${user.age}, data-email=${user.email}">
                                         Edit
+                                    </button>
+                                </td>
+                                <td>
+                                    <button class="btn btn-danger delete-btn"
+                                            th:attr="data-id=${user.id}, data-name=${user.name}, data-age=${user.age}, data-email=${user.email}">
+                                        Delete
                                     </button>
                                 </td>
                             </tr>
@@ -115,6 +122,10 @@
                 <form id="editUserForm">
                     <input type="hidden" id="userId" name="userId">
                     <div class="mb-3">
+                        <label for="userIdLabel"  class="form-label">Id</label>
+                        <input type="text" class="form-control" id="userIdLabel"  name="userIdLabel" disabled>
+                    </div>
+                    <div class="mb-3">
                         <label for="userName" class="form-label">Name</label>
                         <input type="text" class="form-control" id="userName" name="userName" required>
                     </div>
@@ -126,12 +137,39 @@
                         <label for="userEmail" class="form-label">Email</label>
                         <input type="email" class="form-control" id="userEmail" name="userEmail" required>
                     </div>
-                    <!-- Добавьте другие поля, если необходимо -->
+                    <div class="mb-3">
+                        <label for="userPassword" class="form-label">Password</label>
+                        <input type="password" class="form-control" id="userPassword" name="userPassword" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Roles</label>
+                        <div id="rolesContainer"></div>
+                    </div>
+
                 </form>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                 <button type="button" class="btn btn-primary" id="saveChangesBtn">Save changes</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--Модалкак для удаления:-->
+<div class="modal fade" id="deleteUserModal" tabindex="-1" aria-labelledby="deleteUserModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="deleteUserModalLabel">Подтверждение удаления</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                Вы уверены, что хотите удалить пользователя?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
+                <button type="button" class="btn btn-danger" id="confirmDeleteButton">Удалить</button>
             </div>
         </div>
     </div>

@@ -28,6 +28,7 @@ public class PeopleController {
 
     @GetMapping("/users")
     public List<User> getUsers() {
+        System.out.println("метод из REST");
         return userService.getAllUsers();
     }
 
@@ -66,9 +67,10 @@ public class PeopleController {
 
     }
 
-    @DeleteMapping("/users")
-    public void deleteUser(@RequestBody User user) {
-        userService.delete(user);
+    @DeleteMapping("/users/{id}")
+    public void deleteUser(@PathVariable int id) {
+        userService.delete(userService.getUserById(id)); // Предполагается, что метод delete принимает ID
     }
+
 
 }
