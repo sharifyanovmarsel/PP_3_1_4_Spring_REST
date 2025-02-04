@@ -2,6 +2,8 @@ package ru.kata.spring.boot_security.demo.controllers;
 
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -29,22 +31,30 @@ public class UsersController {
 
 
     @GetMapping("/admin")
-    public String adminPage() {
+    public String adminPage(Model model) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+        User user = userService.getUserByName(username);
+        model.addAttribute("user", user);
         return "/people/admin";
     }
 
     @GetMapping("/user")
     public String userPage(Model model, Principal principal) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+        User user = userService.getUserByName(username);
+        model.addAttribute("user", user);
+
         if (principal == null) {
             System.out.println("Principal is null");
             return "redirect:/login"; // или другая страница
         }
         String email = principal.getName();
+
         User currentUser = userService.getUserByName(email);
         model.addAttribute("currentUser", currentUser);
         model.addAttribute("currentRoles", currentUser.getRolesAsText());
         return "/people/user";
     }
-
-
 }

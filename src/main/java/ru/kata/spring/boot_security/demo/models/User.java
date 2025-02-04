@@ -100,9 +100,10 @@ public class User implements UserDetails {
         this.roles = roles;
     }
 
-    public String getRolesAsText(){
+    public String getRolesAsText() {
         return roles.toString().replaceAll("[\\[\\]]", "").replace("ROLE_", "");
     }
+
     public void setPassword(String password) {
         this.password = password;
     }

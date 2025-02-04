@@ -12,7 +12,7 @@
     <!-- Fixed navbar -->
     <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
         <div class="container-fluid">
-            <div class="navbar-brand" >Fixed
+            <div class="navbar-brand" th:text="${user.getEmail() +' with roles ' + user.getRolesAsText()}">Fixed
                 navbar
             </div>
             <div class="collapse navbar-collapse" id="navbarCollapse">

@@ -44,7 +44,6 @@ public class UsersRestController {
 
     @PostMapping("/users")
     public ResponseEntity<HttpStatus> create(@RequestBody @Valid User user, BindingResult bindingResult) {
-
         if (bindingResult.hasErrors()) {
             StringBuilder errorMessage = new StringBuilder();
 
