@@ -58,20 +58,10 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         if (usersRepository.findById(id).isPresent()) {
             User existingUser = usersRepository.findById(id).get();
 
-            // Обновляем основные поля
             existingUser.setName(updatedUser.getName());
             existingUser.setAge(updatedUser.getAge());
             existingUser.setEmail(updatedUser.getEmail());
             existingUser.setPassword(updatedUser.getPassword());
-
-            // Обновляем роли
-//            Set<Role> roles = new HashSet<>();
-//            for (String roleName : updatedUser.getRoles()) {
-//                Role role = roleRepository.findByName(roleName); // Находим роль по имени
-//                if (role != null) {
-//                    roles.add(role);
-//                }
-//            }
             existingUser.setRoles(updatedUser.getRoles()); // Устанавливаем обновленные роли
 
             usersRepository.save(existingUser);
